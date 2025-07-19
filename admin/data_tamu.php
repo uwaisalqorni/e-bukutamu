@@ -1,18 +1,30 @@
 <?php
 include '../db.php';
 
-$result = $conn->query("
-    SELECT buku_tamu.*, lokasi.nama_lokasi, acara.nama_acara
-    FROM buku_tamu
-    JOIN lokasi ON buku_tamu.id_lokasi = lokasi.id
-    JOIN acara ON buku_tamu.id_acara = acara.id
-    ORDER BY waktu_masuk DESC
-");
+// Ambil filter dari URL
+$tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
+$acara   = isset($_GET['acara']) ? intval($_GET['acara']) : '';
+
+// Query dengan filter
+$sql = "
+SELECT buku_tamu.*, lokasi.nama_lokasi, acara.nama_acara
+FROM buku_tamu
+JOIN lokasi ON buku_tamu.id_lokasi = lokasi.id
+JOIN acara ON buku_tamu.id_acara = acara.id
+WHERE DATE(waktu_masuk) = '$tanggal'
+";
+
+if ($acara != '') {
+    $sql .= " AND buku_tamu.id_acara = $acara";
+}
+
+$sql .= " ORDER BY waktu_masuk DESC";
+
+$result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     $no = 1;
     while($row = $result->fetch_assoc()) {
-        // Status check-in/check-out
         if ($row['waktu_keluar']) {
             $status = "<span class='badge bg-success'>✅ Selesai</span>";
             $aksi = "-";
@@ -33,6 +45,6 @@ if ($result->num_rows > 0) {
         </tr>";
     }
 } else {
-    echo "<tr><td colspan='9' class='text-center'>Belum ada data tamu</td></tr>";
+    echo "<tr><td colspan='9' class='text-center'>⚠️ Data tidak ditemukan</td></tr>";
 }
 ?>

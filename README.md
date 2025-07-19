@@ -37,4 +37,4 @@ Aplikasi Buku Tamu berbasis web untuk manajemen daftar hadir tamu. Admin dapat m
 1. **Clone Repository**
    ```bash
    git clone https://github.com/uwaisalqorni/e-bukutamu.git
-   cd buku-tamu-web
+   cd -bukutamu
