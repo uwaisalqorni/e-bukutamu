@@ -1,4 +1,12 @@
-<?php include '../db.php'; ?>
+<?php 
+
+session_start();
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit();
+}
+
+include '../db.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,6 +46,7 @@
         <a href="lokasi.php">📍 Manajemen Lokasi</a>
         <a href="acara.php">📅 Manajemen Acara</a>
         <a href="../index.php">↩️ Kembali ke Buku Tamu</a>
+        <a href="logout.php">🚪 Logout</a>
     </div>
 
     <!-- Content -->
