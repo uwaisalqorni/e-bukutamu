@@ -21,7 +21,7 @@ if (isset($_POST['add'])) {
     $id_lokasi = $conn->insert_id;
 
     // Generate link QR pakai id_lokasi
-    $link_qr = "http://192.168.0.191/bukutamu/index.php?id_lokasi=" . $id_lokasi;
+    $link_qr = "http://192.168.10.51/bukutamu/index.php?id_lokasi=" . $id_lokasi;
 
     // Update link_qr di tabel
     $conn->query("UPDATE lokasi SET link_qr='$link_qr' WHERE id=$id_lokasi");
