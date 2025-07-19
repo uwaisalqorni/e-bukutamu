@@ -1,40 +1,84 @@
-# 📋 Aplikasi Buku Tamu Web
+# 📖 Buku Tamu Web App
 
-Aplikasi Buku Tamu berbasis web untuk manajemen daftar hadir tamu. Admin dapat membuat lokasi, mengatur acara, generate QR Code, dan melihat laporan tamu yang hadir secara realtime.
+Aplikasi **Buku Tamu berbasis web** dengan fitur **Check-In & Check-Out**, **Manajemen Lokasi & QR Code**, dan **integrasi API SIMRS Khanza** untuk otomatis mengambil data pegawai berdasarkan NIK.
 
 ---
 
 ## 🚀 Fitur Utama
 
-✅ **Tamu:**
-- Scan QR Code untuk Check-In / Check-Out.
-- Isi data tamu dengan mudah (Nama, NIK, Acara).  
-- Dropdown acara (tidak perlu ketik manual).  
-
-✅ **Admin:**
-- Manajemen Lokasi (generate link & QR Code per lokasi).
-- Manajemen Acara (tambah/edit/hapus daftar acara).  
-- Dashboard realtime (auto-refresh setiap 5 detik).  
-- Manual Check-Out tamu dari dashboard.  
-- Share link lokasi & download QR Code.  
-
-✅ **Teknologi:**
-- PHP Native (tanpa framework)
-- MySQL (Database)
-- Bootstrap 5 (Frontend UI)
-- jQuery (auto-refresh dashboard)
-- [Endroid QR Code Library](https://github.com/endroid/qr-code) (QR Generator)
+✅ **Scan QR Code untuk akses form buku tamu**  
+✅ **Form Check-In**: User isi NIK → Nama otomatis terisi dari API SIMRS  
+✅ **Form Check-Out**: User masukkan NIK untuk keluar  
+✅ **Manajemen Lokasi**: Admin dapat membuat QR Code unik per lokasi  
+✅ **Manajemen Acara**: Admin mengatur daftar acara yang akan dipilih user  
+✅ **Dashboard Admin**: Melihat daftar tamu yang hadir dan export data ke Excel  
+✅ **Mobile-Friendly**: Desain responsif untuk digunakan di HP & tablet
 
 ---
 
-## 📂 Struktur Folder
+## 🗂️ Struktur Folder
 
+bukutamu/
+├── Api/
+│ ├── get_pegawai.php
+│ ├── search_pegawai.php
+│ └── validate_checkout.php
+├── admin/
+│ ├── dashboard.php
+│ ├── lokasi.php
+│ ├── acara.php
+├── qrcode/
+│ └── [QR Code images]
+├── db.php
+├── index.php
+├── checkin.php
+├── checkout.php
+├── database.sql
+└── README.md
 
 ---
 
-## ⚙️ Instalasi
+## ⚙️ Cara Install
 
-1. **Clone Repository**
+1. **Clone Repo**
    ```bash
-   git clone https://github.com/uwaisalqorni/e-bukutamu.git
-   cd -bukutamu
+   git clone https://github.com/username/bukutamu.git
+Import Database
+
+Buat database baru di MySQL (contoh: bukutamu_db)
+
+Import file database.sql ke database tersebut
+
+Edit Koneksi Database
+Ubah db.php sesuai setting XAMPP/MySQL kamu:
+$conn = new mysqli("localhost", "root", "", "bukutamu_db");
+Jalankan di Browser
+Buka:
+http://localhost/bukutamu/index.php
+
+📡 Integrasi API SIMRS
+Pastikan API SIMRS sudah berjalan di:
+http://(sesuaikan)/ci3-api-bot/index.php/api/pegawai
+API digunakan untuk:
+Mengambil data pegawai (NIK → Nama)
+
+Validasi saat Check-Out
+
+🔒 Login Admin
+Admin bisa mengakses:
+
+
+http://localhost/bukutamu/admin/dashboard.php
+📦 Fitur Tambahan yang Akan Datang
+
+ Export Excel
+ Export PDF
+
+ Login Multi-Level (Admin & Operator)
+
+🧑‍💻 Kontributor
+👨‍💻 Developer: [IT ABAL ABAL]
+🏥 Integrasi SIMRS: [Team IT RS]
+
+📜 Lisensi
+MIT License - Silakan digunakan & dimodifikasi
