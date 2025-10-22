@@ -1,7 +1,7 @@
 <?php
 if (isset($_POST['nik'])) {
     $nik = $_POST['nik'];
-    $api_url = "http://192.168.10.51/ci3-api-bot/index.php/api/pegawai?nik=" . urlencode($nik);
+    $api_url = "http://192.168.0.191/ci3-api-bot/index.php/api/pegawai?nik=" . urlencode($nik);
 
     // Kirim request GET ke API SIMRS
     $ch = curl_init();

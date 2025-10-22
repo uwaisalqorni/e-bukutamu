@@ -65,7 +65,9 @@ Mengambil data pegawai (NIK → Nama)
 Validasi saat Check-Out
 
 🔒 Login Admin
-Admin bisa mengakses:
+Admin bisa mengakses: 
+username : admin
+pass : 879879
 
 
 http://localhost/bukutamu/admin/dashboard.php

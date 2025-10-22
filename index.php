@@ -22,12 +22,45 @@ $acara_result = $conn->query("SELECT * FROM acara ORDER BY nama_acara ASC");
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+
+<style>
+  .sig-box{border:1px dashed #999;border-radius:8px;background:#fff}
+  .sig-actions .btn{min-width:120px}
+  .sig-hint{font-size:.85rem;color:#6c757d}
+  canvas{touch-action: none;}
+</style>
+<style>
+  .sig-wrap{width:100%}
+  .sig-box{
+    border:1px dashed #9aa0a6; border-radius:12px; background:#fff;
+    padding:8px; position:relative;
+  }
+  .sig-canvas{
+    width:100%; height:180px; display:block; border-radius:8px; background:#fff;
+    touch-action:none; /* penting di mobile: biar bisa gambar tanpa scroll */
+  }
+  /* layar kecil: tinggi sedikit lebih besar biar lega */
+  @media (max-width: 480px){
+    .sig-canvas{ height:210px; }
+  }
+  .sig-actions{
+    display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.5rem;
+  }
+  .sig-actions .btn{ min-width:120px; }
+  .sig-hint{ font-size:.85rem; color:#6c757d; margin-left:.25rem; }
+</style>
+
+
 
 </head>
 <body class="bg-light">
     <div class="container mt-5">
         <div class="card shadow p-4">
-            <h2 class="text-center mb-3">📋 Buku Tamu</h2>
+            <h2 class="text-center mb-3">📋 Daftar Hadir</h2>
             <p class="text-center text-muted">Lokasi: <strong><?php echo htmlspecialchars($nama_lokasi); ?></strong></p>
             
             <!-- Form Check-In -->
@@ -59,7 +92,27 @@ $acara_result = $conn->query("SELECT * FROM acara ORDER BY nama_acara ASC");
                     </select>
 
                 </div>
+                                          <!-- Tanda Tangan Digital -->
+<!-- Tanda Tangan Digital (Responsif) -->
+<div class="mb-3 sig-wrap">
+  <label class="form-label mb-2">Tanda Tangan <span class="text-danger">*</span></label>
+
+  <div class="sig-box">
+    <canvas id="signature" class="sig-canvas"></canvas>
+  </div>
+
+  <div class="sig-actions">
+    <button type="button" id="sigClear" class="btn btn-outline-secondary">Bersihkan</button>
+    <button type="button" id="sigUndo"  class="btn btn-outline-warning">Undo</button>
+    <button type="button" id="sigFit"   class="btn btn-outline-info">Sesuaikan Ukuran</button>
+    <span class="sig-hint">Gunakan jari/stylus. Putar layar bila perlu.</span>
+  </div>
+
+  <!-- base64 PNG dikirim ke server -->
+  <input type="hidden" name="ttd" id="ttd">
+</div>
                 </div>
+      
 
                 <button type="submit" class="btn btn-success w-100">✅ Check-In</button>
             </form>
@@ -93,24 +146,23 @@ $acara_result = $conn->query("SELECT * FROM acara ORDER BY nama_acara ASC");
                     $('#nama').val('');
                 }
             });
-
-
             </script>
 
-            <hr class="my-4">
-
             <!-- Form Check-Out -->
-            <h5 class="text-center text-muted mt-4">Atau Check-Out jika pulang:</h5>
-            <form action="checkout.php" method="POST" id="formCheckout">
-                <input type="hidden" name="id_lokasi" value="<?php echo $id_lokasi; ?>">
-                <div class="mb-3">
-                    <label for="nik_out" class="form-label">NIK</label>
-                    <input type="text" class="form-control" id="nik_out" name="nik_out" placeholder="Masukkan NIK Anda" required>
-                    <div id="checkinStatus" class="form-text"></div>
+            <h5 class="text-center text-muted mt-3">Atau Check-Out jika pulang:</h5>
+            <div class="container mt-2">
+                <div class="card shadow p-4">
+                    <form action="checkout.php" method="POST" id="formCheckout">
+                        <input type="hidden" name="id_lokasi" value="<?php echo $id_lokasi; ?>">
+                        <div class="mb-3">
+                            <label for="nik_out" class="form-label">NIK</label>
+                            <input type="text" class="form-control" id="nik_out" name="nik_out" placeholder="Masukkan NIK Anda" required>
+                            <div id="checkinStatus" class="form-text"></div>
+                        </div>
+                        <button type="submit" class="btn btn-danger w-100">⏹️ Check-Out</button>
+                    </form>
                 </div>
-                <button type="submit" class="btn btn-danger w-100">⏹️ Check-Out</button>
-            </form>
-
+            </div>
             <script>
             $('#nik_out').on('blur', function() {
                 let nik = $(this).val();
@@ -134,7 +186,118 @@ $acara_result = $conn->query("SELECT * FROM acara ORDER BY nama_acara ASC");
                     $('#checkinStatus').text('');
                 }
             });
-            </script>
+          
+            // Tanda Tangan Digital
+(function(){
+  // Pastikan ID ini sesuai di HTML:
+  const form   = document.getElementById('formTamu');   // <form id="formTamu" ...>
+  const canvas = document.getElementById('signature');  // <canvas id="signature">
+  const hidden = document.getElementById('ttd');        // <input type="hidden" id="ttd" name="ttd">
+
+  if (!form || !canvas || !hidden) {
+    console.warn('SignaturePad: pastikan id formTamu, signature, dan ttd ada.');
+    return;
+  }
+
+  let pointerDown = false;
+  let hasSigned   = false;   // penanda user sudah gores minimal 1x
+  let lastSize    = { w: 0, h: 0 };
+
+  const sigPad = new SignaturePad(canvas, {
+    backgroundColor: 'rgba(255,255,255,1)',
+    penColor: '#111',
+    onBegin: () => { hasSigned = true; pointerDown = true; },
+    onEnd:   () => { pointerDown = false; }
+  });
+
+  // Resize tajam + preserve coretan
+  function resizeCanvas({preserve=true, force=false} = {}){
+    // Jangan resize saat user sedang menggambar (mencegah kehilangan coretan)
+    if (pointerDown) return;
+
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+    // Lebar CSS aktual elemen pembungkus
+    const rect = canvas.getBoundingClientRect();
+    const cssWidth  = Math.max( Math.floor(rect.width),  310 );
+    const cssHeight = Math.floor( (window.innerWidth <= 460) ? 200 : 170 );
+
+    const targetW = cssWidth  * ratio;
+    const targetH = cssHeight * ratio;
+
+    // Hindari clear jika ukuran tidak berubah
+    if (!force && lastSize.w === targetW && lastSize.h === targetH) return;
+
+    const data = (preserve && !sigPad.isEmpty()) ? sigPad.toData() : null;
+
+    canvas.width  = targetW;
+    canvas.height = targetH;
+
+    // Scale context biar tidak blur
+    const ctx = canvas.getContext('2d');
+    ctx.scale(ratio, ratio);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Tinggi visual kanvas (CSS) – biar area nyaman disentuh
+    canvas.style.width  = cssWidth + 'px';
+    canvas.style.height = cssHeight + 'px';
+
+    if (data) sigPad.fromData(data);
+
+    lastSize = { w: targetW, h: targetH };
+  }
+
+  // Panggil awal
+  resizeCanvas({preserve:false, force:true});
+
+  // Debounce helper
+  let rezTimer = null;
+  function debouncedResize(){
+    clearTimeout(rezTimer);
+    rezTimer = setTimeout(() => resizeCanvas({preserve:true}), 120);
+  }
+
+  window.addEventListener('resize', debouncedResize);
+  window.addEventListener('orientationchange', () => {
+    // Tunggu layout settle di mobile
+    setTimeout(() => resizeCanvas({preserve:true, force:true}), 180);
+  });
+
+  // Cegah halaman scroll saat menggambar
+  canvas.addEventListener('touchstart', () => { pointerDown = true; document.body.style.overflow='hidden'; }, {passive:false});
+  canvas.addEventListener('touchend',   () => { pointerDown = false; document.body.style.overflow='';       }, {passive:false});
+  canvas.addEventListener('touchcancel',() => { pointerDown = false; document.body.style.overflow='';       }, {passive:false});
+
+  // Tombol aksi
+  const btnClear = document.getElementById('sigClear');
+  const btnUndo  = document.getElementById('sigUndo');
+  const btnFit   = document.getElementById('sigFit');
+
+  if (btnClear) btnClear.addEventListener('click', () => { sigPad.clear(); hasSigned = false; });
+  if (btnUndo)  btnUndo .addEventListener('click', () => {
+    const data = sigPad.toData();
+    if (data.length) { data.pop(); sigPad.fromData(data); }
+    // update hasSigned berdasarkan isi pad
+    hasSigned = !sigPad.isEmpty();
+  });
+  if (btnFit)   btnFit  .addEventListener('click', () => resizeCanvas({preserve:true, force:true}));
+
+  // Validasi submit — pakai dua syarat: hasSigned ATAU canvas tidak empty
+  form.addEventListener('submit', function(e){
+    // Jika tombol submit bertipe "button" tidak akan submit — pastikan type="submit"
+    const signed = hasSigned || !sigPad.isEmpty();
+    if (!signed) {
+      e.preventDefault();
+      alert('Tanda tangan wajib diisi.');
+      return false;
+    }
+    hidden.value = sigPad.toDataURL('image/png');
+  });
+})();
+</script>
+
+
         </div>
     </div>
 </body>

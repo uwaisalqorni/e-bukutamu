@@ -3,7 +3,7 @@ $keyword = isset($_GET['term']) ? $_GET['term'] : '';
 $data = [];
 
 if (!empty($keyword)) {
-    $api_url = "http://192.168.10.51/ci3-api-bot/index.php/api/pegawai";
+    $api_url = "http://192.168.0.191/ci3-api-bot/index.php/api/pegawai";
 
     // Ambil semua data pegawai dari API SIMRS
     $ch = curl_init();

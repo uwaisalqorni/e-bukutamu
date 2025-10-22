@@ -1,6 +1,6 @@
 <?php
 $nik = "180051";
-$api_url = "http://192.168.10.51/ci3-api-bot/index.php/api/pegawai?nik=" . urlencode($nik);
+$api_url = "http://192.168.0.191/ci3-api-bot/index.php/api/pegawai?nik=" . urlencode($nik);
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $api_url);

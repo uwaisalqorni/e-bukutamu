@@ -12,7 +12,7 @@ if ($id_lokasi == 0) {
 }
 
 // URL tujuan QR Code (ubah domain ke domain kamu)
-$link = "http://192.168.10.51/bukutamu/index.php?id_lokasi=" . $id_lokasi;
+$link = "https://bible-kong-sam-use.trycloudflare.com/bukutamu/index.php?id_lokasi=" . $id_lokasi;
 
 // Buat QR Code
 $qr = QrCode::create($link);
