@@ -1,6 +1,7 @@
 # 📖 Buku Tamu Web App
 
-Aplikasi **Buku Tamu berbasis web** dengan fitur **Check-In & Check-Out**, **Manajemen Lokasi & QR Code**, dan **integrasi API SIMRS Khanza** untuk otomatis mengambil data pegawai berdasarkan NIK.
+Aplikasi **Buku Tamu berbasis web** dengan fitur **Check-In & Check-Out**, **Manajemen Lokasi & QR Code**, 
+dan **integrasi API SIMRS Khanza** untuk otomatis mengambil data pegawai berdasarkan NIK.
 
 ---
 
@@ -48,6 +49,16 @@ Import Database
 Buat database baru di MySQL (contoh: bukutamu_db)
 
 Import file database.sql ke database tersebut
+
+update sql : 
+1. ALTER TABLE buku_tamu
+  ADD COLUMN ttd_path VARCHAR(255) NULL AFTER waktu_keluar,
+  ADD COLUMN waktu_masuk DATETIME NULL;
+2. ALTER TABLE lokasi ADD COLUMN is_deleted TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE lokasi ADD COLUMN deleted_at DATETIME NULL;
+3. ALTER TABLE acara ADD COLUMN is_deleted TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE acara ADD COLUMN deleted_at DATETIME NULL;
+
 
 Edit Koneksi Database
 Ubah db.php sesuai setting XAMPP/MySQL kamu:
