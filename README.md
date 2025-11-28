@@ -4,6 +4,20 @@ Aplikasi **Buku Tamu berbasis web** dengan fitur **Check-In & Check-Out**, **Man
 dan **integrasi API SIMRS Khanza** untuk otomatis mengambil data pegawai berdasarkan NIK.
 
 ---
+-- Tampilan Login Admin --
+
+<img width="507" height="601" alt="image" src="https://github.com/user-attachments/assets/0b904285-c724-44e2-9552-d23b9e217e65" />
+
+-- Tampilan Dashkboard Data Tamu Hadir --
+<img width="1915" height="865" alt="image" src="https://github.com/user-attachments/assets/3c456bba-0583-464c-b616-8cced46b1031" />
+
+-- Menu Manajemen lokasi dan Barcode Qr COde kehadiran --
+<img width="1919" height="866" alt="image" src="https://github.com/user-attachments/assets/19613fb1-8239-463c-be95-781e34acc15b" />
+
+-- Menejemen Acara --
+<img width="1919" height="864" alt="image" src="https://github.com/user-attachments/assets/b38f2ae5-2348-4499-b653-2ad8ec6c5857" />
+
+
 
 ## 🚀 Fitur Utama
 
